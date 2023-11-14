@@ -5,16 +5,16 @@ import Form from './Form';
 
 function App() {
 
-  let [isSubmitted, setIsSubmitted] = useState(true);
+  let [isSubmitted, setIsSubmitted] = useState(false);
   console.log(isSubmitted)
   const titleOne = "Enter all your boozey details, and we'll give you your best booze for your buck!"
   const titleTwo = "Enter another option or more. When you're ready, hit go!";
-  let title = isSubmitted ? titleOne : titleTwo;
+  let title = isSubmitted ? titleTwo : titleOne;
 
   const renderForm = (e) => {
     e.preventDefault();
     console.log('Working');
-    setIsSubmitted(false);
+    setIsSubmitted(true);
     console.log(isSubmitted);
   }
 
