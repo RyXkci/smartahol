@@ -2,6 +2,11 @@ import { useState } from 'react';
 import './Form.css'
 
 export default function Form({ title, isSubmitted, renderForm }) {
+
+const [dataArr, setDataArr] = useState([]);  // array to compare the drink objects when "go" button is clicked
+
+const [abvArr, setAbvArr] = useState([]);   // array to insert the percentage to perform calculations
+
 const [formData, setFormData] = useState({
     name: "",
     amount: "",
@@ -20,10 +25,48 @@ const handleChange = (evt) => {
     })
 }
 
-
+const makeDataObj =(drinkName, drinkAmount, costML, drinkPercentage) => {
+    const dataOBJ = {
+        name: drinkName,
+        amount: drinkAmount,
+        cost: costML,
+        percentage: drinkPercentage
+    }
+    console.log(dataOBJ)
+setDataArr((currDataArr => {
+    return [...currDataArr, dataOBJ];
+}))
+}
 const handleSubmit =(e) => {
     e.preventDefault()
     console.log(formData)
+
+    const drinkName = formData.name;
+    //   TURNING EVERYTHING IN TO ML
+    let drinkAmount;
+    if (formData.unit === "cl") {
+        drinkAmount = parseInt(formData.amount) * 10
+    } else if (formData.unit === "l") {
+        drinkAmount = parseInt(formData.amount) * 1000
+    } else{drinkAmount = parseInt(formData.amount)}
+    console.log(drinkAmount)
+
+    //    SAVING THE COST
+    let drinkCost = parseInt(formData.cost);
+    let costML = drinkCost/drinkAmount;
+    console.log(drinkCost, costML)
+
+    //    SAVING THE PERCENTAGE
+    let drinkPercentage = parseInt(formData.percentage);
+    console.log(drinkPercentage);
+
+    setAbvArr((currAbvArr => {
+        return [...currAbvArr, drinkPercentage]
+    }))
+    console.log(abvArr)
+
+    makeDataObj(drinkName, drinkAmount, costML, drinkPercentage);
+
 }
 
     // const [drinkName, setDrinkName] = useState('');
