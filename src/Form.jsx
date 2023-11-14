@@ -37,6 +37,7 @@ setDataArr((currDataArr => {
     return [...currDataArr, dataOBJ];
 }))
 }
+
 const handleSubmit =(e) => {
     e.preventDefault()
     console.log(formData)
@@ -66,10 +67,24 @@ const handleSubmit =(e) => {
     console.log(abvArr)
 
     makeDataObj(drinkName, drinkAmount, costML, drinkPercentage);
+    
+    setFormData({
+    name: "",
+    amount: "",
+    unit:"ml",
+    cost: "",
+    percentage: "",
 
+})
+renderForm(e);
 }
 
-    // const [drinkName, setDrinkName] = useState('');
+const runCalculate = (e) => {
+    e.preventDefault();
+    handleSubmit(e);
+    const abvMax = Math.max(...abvArr);
+    console.log(abvMax);
+}
 
     return (<>
         <h2 className="form-title">{title}</h2>
@@ -99,7 +114,7 @@ const handleSubmit =(e) => {
                 <div className="form-input-container"></div>
                 <div className="form-input-container"></div>
                 <div className="box-container"><button className="form-button" onClick={handleSubmit}>Submit</button>
-                    {isSubmitted && <button className="form-button">Go</button>}</div>
+                    {isSubmitted && <button className="form-button" onClick={runCalculate}>Go</button>}</div>
 
             </form>
         </div>
