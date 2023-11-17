@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Form.css'
 
 export default function Form({ title, isSubmitted, renderForm }) {
@@ -6,6 +6,8 @@ export default function Form({ title, isSubmitted, renderForm }) {
 const [dataArr, setDataArr] = useState([]);  // array to compare the drink objects when "go" button is clicked
 
 const [abvArr, setAbvArr] = useState([]);   // array to insert the percentage to perform calculations
+
+const [bestAbvObj, setBestAbvObj] = useState([null]); // react state in which to save drink with best abv
 
 const [formData, setFormData] = useState({
     name: "",
@@ -16,6 +18,16 @@ const [formData, setFormData] = useState({
 
 })
 
+const [triggerProcess, setTriggerProcess] = useState(false);
+
+useEffect(() => {
+    if (triggerProcess) {
+      processData();
+      setTriggerProcess(false);
+    }
+  }, [dataArr, triggerProcess]);
+
+
 const handleChange = (evt) => {
     const changedField = evt.target.name;
     const changedValue = evt.target.value;
@@ -23,19 +35,6 @@ const handleChange = (evt) => {
         currData[changedField] = changedValue;
         return {...currData}
     })
-}
-
-const makeDataObj =(drinkName, drinkAmount, costML, drinkPercentage) => {
-    const dataOBJ = {
-        name: drinkName,
-        amount: drinkAmount,
-        cost: costML,
-        percentage: drinkPercentage
-    }
-    console.log(dataOBJ)
-setDataArr((currDataArr => {
-    return [...currDataArr, dataOBJ];
-}))
 }
 
 const handleSubmit =(e) => {
@@ -68,25 +67,71 @@ const handleSubmit =(e) => {
 
     makeDataObj(drinkName, drinkAmount, costML, drinkPercentage);
     
-    setFormData({
+
+  renderForm(e);
+}
+
+const makeDataObj =(drinkName, drinkAmount, costML, drinkPercentage) => {
+    const dataOBJ = {
+        name: drinkName,
+        amount: drinkAmount,
+        cost: costML,
+        percentage: drinkPercentage
+    }
+    console.log(dataOBJ)
+   setDataArr((oldDataArr) => [...oldDataArr, dataOBJ]);
+   setFormData({
     name: "",
     amount: "",
     unit:"ml",
     cost: "",
-    percentage: "",
+    percentage: ""
 
 })
-renderForm(e);
+   console.log(dataArr)
 }
 
 const runCalculate = (e) => {
     e.preventDefault();
     handleSubmit(e);
-    const abvMax = Math.max(...abvArr);
-    console.log(abvMax);
+    setTriggerProcess(true); 
 }
 
+const processData = () => {
+    const abvMax = Math.max(...abvArr);
+    
+    // Create a copy of dataArr with modifications
+    const updatedData = dataArr.map(item => {
+      const abvCost = (item.cost * abvMax) / item.percentage;
+      return {
+        ...item,
+        abvCost: abvCost,
+      };
+    });
+  
+    // Update state using a callback function
+    setDataArr(prevDataArr => [...updatedData]);
+
+    findBestAbv();
+  };
+
+  const findBestAbv = () => {
+    const bestAbv = dataArr.reduce((minObj, currentObj) => {
+        return currentObj.abvCost < minObj.abvCost ? currentObj : minObj;
+      });
+      setBestAbvObj(bestAbv)
+  }
+
+
+
+
+  
+  
+  
+
     return (<>
+    {bestAbv ? <Result 
+         drink={bestAbv}/> : <div>
         <h2 className="form-title">{title}</h2>
         <div className="Form">
             <form action="">
@@ -118,6 +163,8 @@ const runCalculate = (e) => {
 
             </form>
         </div>
+        </div>
+}
     </>
     )
 
