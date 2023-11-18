@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Form.css'
+import Result from './Result';
 
 export default function Form({ title, isSubmitted, renderForm }) {
 
@@ -7,7 +8,7 @@ const [dataArr, setDataArr] = useState([]);  // array to compare the drink objec
 
 const [abvArr, setAbvArr] = useState([]);   // array to insert the percentage to perform calculations
 
-const [bestAbvObj, setBestAbvObj] = useState([null]); // react state in which to save drink with best abv
+const [bestAbvObj, setBestAbvObj] = useState(null); // react state in which to save drink with best abv
 
 const [formData, setFormData] = useState({
     name: "",
@@ -67,8 +68,7 @@ const handleSubmit =(e) => {
 
     makeDataObj(drinkName, drinkAmount, costML, drinkPercentage);
     
-
-  renderForm(e);
+   renderForm(e);
 }
 
 const makeDataObj =(drinkName, drinkAmount, costML, drinkPercentage) => {
@@ -110,28 +110,33 @@ const processData = () => {
     });
   
     // Update state using a callback function
-    setDataArr(prevDataArr => [...updatedData]);
+    // setDataArr(prevDataArr => [...updatedData]);
+    setDataArr(updatedData);
+    findBestAbv(updatedData)
+    
 
-    findBestAbv();
   };
 
-  const findBestAbv = () => {
-    const bestAbv = dataArr.reduce((minObj, currentObj) => {
+  const findBestAbv = (updatedData) => {
+    const minAbvCostObj = updatedData.reduce((minObj, currentObj) => {
         return currentObj.abvCost < minObj.abvCost ? currentObj : minObj;
       });
-      setBestAbvObj(bestAbv)
+    setBestAbvObj(minAbvCostObj);
   }
 
 
 
 
+
   
-  
+//   {bestAbvObj ? <Result 
+//     drink={bestAbvObj}/> : 
   
 
     return (<>
-    {bestAbv ? <Result 
-         drink={bestAbv}/> : <div>
+    {bestAbvObj ? <Result 
+        drink={bestAbvObj}/> :
+    <div className="form-container">
         <h2 className="form-title">{title}</h2>
         <div className="Form">
             <form action="">
@@ -164,7 +169,8 @@ const processData = () => {
             </form>
         </div>
         </div>
-}
+    }
+
     </>
     )
 
