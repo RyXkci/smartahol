@@ -6,7 +6,7 @@ export default function Form({ title, isSubmitted, renderForm }) {
 
 const [dataArr, setDataArr] = useState([]);  // array to compare the drink objects when "go" button is clicked
 
-const [abvArr, setAbvArr] = useState([]);   // array to insert the percentage to perform calculations
+// const [abvArr, setAbvArr] = useState([]);   // array to insert the percentage to perform calculations
 
 const [bestAbvObj, setBestAbvObj] = useState(null); // react state in which to save drink with best abv
 
@@ -61,10 +61,10 @@ const handleSubmit =(e) => {
     let drinkPercentage = parseInt(formData.percentage);
     console.log(drinkPercentage);
 
-    setAbvArr((currAbvArr => {
-        return [...currAbvArr, drinkPercentage]
-    }))
-    console.log(abvArr)
+    // setAbvArr((currAbvArr => {
+    //     return [...currAbvArr, drinkPercentage]
+    // }))
+    // console.log(abvArr)
 
     makeDataObj(drinkName, drinkAmount, costML, drinkPercentage);
     
@@ -98,8 +98,11 @@ const runCalculate = (e) => {
 }
 
 const processData = () => {
-    const abvMax = Math.max(...abvArr);
-    
+    // const abvMax = Math.max(...abvArr);
+    const abvMax = dataArr.reduce((maxItem, currentItem) => {
+        return currentItem.percentage > maxItem.percentage ? currentItem.percentage : maxItem.percentage;
+    })
+    console.log(abvMax)
     // Create a copy of dataArr with modifications
     const updatedData = dataArr.map(item => {
       const abvCost = (item.cost * abvMax) / item.percentage;
@@ -120,7 +123,7 @@ const processData = () => {
   const findBestAbv = (updatedData) => {
     const minAbvCostObj = updatedData.reduce((minObj, currentObj) => {
         return currentObj.abvCost < minObj.abvCost ? currentObj : minObj;
-      });
+      }); // Reduce, starts as first abvCost of object, checks if second is smaller. If it is it returns it, othherwise it returns the current.Used to find the smallest abv.
     setBestAbvObj(minAbvCostObj);
   }
 
