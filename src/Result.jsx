@@ -2,7 +2,14 @@ import { useState } from 'react';
 import './Result.css'
 
 
-export default function Result({ drink }) {
+export default function Result({ drink, setDrink, isSubmitted, dataArr, setDataArr}) {
+    console.log(isSubmitted)
+    const reset = () => {
+        console.log(isSubmitted)
+        isSubmitted = false;
+        setDrink(null)
+        setDataArr([]);
+    }
     return (<>
         <h1 className="title">
             Your best booze for your buck is: {drink.name}!
@@ -14,6 +21,7 @@ export default function Result({ drink }) {
                 iure reiciendis non, sequi recusandae quisquam autem eaque id consectetur,
                 tenetur libero! Cumque consectetur culpa sed.</p>
         </div>
+        <button onClick={reset}>Reset</button>
 
     </>
     )

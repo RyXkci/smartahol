@@ -5,9 +5,6 @@ import Result from './Result';
 export default function Form({ title, isSubmitted, renderForm }) {
 
 const [dataArr, setDataArr] = useState([]);  // array to compare the drink objects when "go" button is clicked
-
-// const [abvArr, setAbvArr] = useState([]);   // array to insert the percentage to perform calculations
-
 const [bestAbvObj, setBestAbvObj] = useState(null); // react state in which to save drink with best abv
 
 const [formData, setFormData] = useState({
@@ -21,6 +18,8 @@ const [formData, setFormData] = useState({
 
 const [triggerProcess, setTriggerProcess] = useState(false);
 
+// Boolean to trigger the processData button when "go" button is clicked. 
+//Set up like this so user doesn't have to click "submit" then "go" when they've finished inputing options
 useEffect(() => {
     if (triggerProcess) {
       processData();
@@ -61,10 +60,6 @@ const handleSubmit =(e) => {
     let drinkPercentage = parseInt(formData.percentage);
     console.log(drinkPercentage);
 
-    // setAbvArr((currAbvArr => {
-    //     return [...currAbvArr, drinkPercentage]
-    // }))
-    // console.log(abvArr)
 
     makeDataObj(drinkName, drinkAmount, costML, drinkPercentage);
     
@@ -100,8 +95,8 @@ const runCalculate = (e) => {
 const processData = () => {
     // const abvMax = Math.max(...abvArr);
     const abvMax = dataArr.reduce((maxItem, currentItem) => {
-        return currentItem.percentage > maxItem.percentage ? currentItem.percentage : maxItem.percentage;
-    })
+        return currentItem.percentage > maxItem.percentage ? currentItem.percentage : maxItem;
+    }, dataArr[0].percentage)
     console.log(abvMax)
     // Create a copy of dataArr with modifications
     const updatedData = dataArr.map(item => {
@@ -126,19 +121,14 @@ const processData = () => {
       }); // Reduce, starts as first abvCost of object, checks if second is smaller. If it is it returns it, othherwise it returns the current.Used to find the smallest abv.
     setBestAbvObj(minAbvCostObj);
   }
-
-
-
-
-
-  
-//   {bestAbvObj ? <Result 
-//     drink={bestAbvObj}/> : 
   
 
     return (<>
     {bestAbvObj ? <Result 
-        drink={bestAbvObj}/> :
+        drink={bestAbvObj}
+        setDrink={setBestAbvObj}
+        setDataArr={setDataArr}
+        isSubmitted={isSubmitted}/> :
     <div className="form-container">
         <h2 className="form-title">{title}</h2>
         <div className="Form">
