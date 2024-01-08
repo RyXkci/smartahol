@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import './Form.css'
 import Result from './Result';
 
-export default function Form({ title, isSubmitted, renderForm }) {
+import { useFormContext } from './hooks/useFormContext';
+
+export default function Form({ title, renderForm }) {
+
+const {isSubmitted, changeSubmitted} = useFormContext()
 
 const [dataArr, setDataArr] = useState([]);  // array to compare the drink objects when "go" button is clicked
 const [bestAbvObj, setBestAbvObj] = useState(null); // react state in which to save drink with best abv
@@ -63,7 +67,8 @@ const handleSubmit =(e) => {
 
     makeDataObj(drinkName, drinkAmount, costML, drinkPercentage);
     
-   renderForm(e);
+//    renderForm(e);
+changeSubmitted(true)
 }
 
 const makeDataObj =(drinkName, drinkAmount, costML, drinkPercentage) => {
@@ -127,8 +132,7 @@ const processData = () => {
     {bestAbvObj ? <Result 
         drink={bestAbvObj}
         setDrink={setBestAbvObj}
-        setDataArr={setDataArr}
-        isSubmitted={isSubmitted}/> :
+        setDataArr={setDataArr}/> :
     <div className="form-container">
         <h2 className="form-title">{title}</h2>
         <div className="Form">

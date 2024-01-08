@@ -3,9 +3,12 @@ import './App.css';
 
 import Form from './Form';
 
+import { useFormContext } from './hooks/useFormContext';
+
 function App() {
 
-  let [isSubmitted, setIsSubmitted] = useState(false);
+  // let [isSubmitted, setIsSubmitted] = useState(false);
+  const {isSubmitted} = useFormContext()
   console.log(isSubmitted)
   const titleOne = "Enter all your boozey details, and we'll give you your best booze for your buck!"
   const titleTwo = "Enter another option or more. When you're ready, hit go!";
@@ -14,7 +17,7 @@ function App() {
   const renderForm = (e) => {
     e.preventDefault();
     console.log('Working');
-    setIsSubmitted(true);
+    // setIsSubmitted(true);
     console.log(isSubmitted);
   }
 

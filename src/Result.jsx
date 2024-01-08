@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import './Result.css'
 
+import { useFormContext } from './hooks/useFormContext';
 
-export default function Result({ drink, setDrink, isSubmitted, dataArr, setDataArr}) {
-    console.log(isSubmitted)
+
+
+export default function Result({ drink, setDrink, dataArr, setDataArr}) {
+    const {isSubmitted, changeSubmitted} = useFormContext()
     const reset = () => {
-        console.log(isSubmitted)
-        isSubmitted = false;
+        changeSubmitted(false);
         setDrink(null)
         setDataArr([]);
     }
