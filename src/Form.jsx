@@ -13,7 +13,8 @@ const [bestAbvObj, setBestAbvObj] = useState(null); // react state in which to s
 
 const [formData, setFormData] = useState({
     name: "",
-    amount: "",
+    amount: 1,
+    volume: "",
     unit:"ml",
     cost: "",
     percentage: "",
@@ -46,18 +47,21 @@ const handleSubmit =(e) => {
     console.log(formData)
 
     const drinkName = formData.name;
-    //   TURNING EVERYTHING IN TO ML
-    let drinkAmount;
+ 
+    //   multiply the amount by the number before converting.
+    let totalVolume = parseInt(formData.volume) * formData.amount;
+    let parsedVolume;
+       //   TURNING EVERYTHING IN TO ML
     if (formData.unit === "cl") {
-        drinkAmount = parseInt(formData.amount) * 10
+        parsedVolume = totalVolume * 10
     } else if (formData.unit === "l") {
-        drinkAmount = parseInt(formData.amount) * 1000
-    } else{drinkAmount = parseInt(formData.amount)}
-    console.log(drinkAmount)
+        parsedVolume = totalVolume * 1000
+    } else{parsedVolume = totalVolume}
+    console.log(parsedVolume)
 
     //    SAVING THE COST
     let drinkCost = parseInt(formData.cost);
-    let costML = drinkCost/drinkAmount;
+    let costML = drinkCost/parsedVolume;
     console.log(drinkCost, costML)
 
     //    SAVING THE PERCENTAGE
@@ -65,16 +69,16 @@ const handleSubmit =(e) => {
     console.log(drinkPercentage);
 
 
-    makeDataObj(drinkName, drinkAmount, costML, drinkPercentage);
+    makeDataObj(drinkName, parsedVolume, costML, drinkPercentage);
     
 //    renderForm(e);
 changeSubmitted(true)
 }
 
-const makeDataObj =(drinkName, drinkAmount, costML, drinkPercentage) => {
+const makeDataObj =(drinkName, parsedVolume, costML, drinkPercentage) => {
     const dataOBJ = {
         name: drinkName,
-        amount: drinkAmount,
+        volume: parsedVolume,
         cost: costML,
         percentage: drinkPercentage
     }
@@ -82,10 +86,11 @@ const makeDataObj =(drinkName, drinkAmount, costML, drinkPercentage) => {
    setDataArr((oldDataArr) => [...oldDataArr, dataOBJ]);
    setFormData({
     name: "",
-    amount: "",
+    amount: 1,
+    volume: "",
     unit:"ml",
     cost: "",
-    percentage: ""
+    percentage: "",
 
 })
    console.log(dataArr)
@@ -100,12 +105,12 @@ const runCalculate = (e) => {
 const processData = () => {
     // const abvMax = Math.max(...abvArr);
     const abvMax = dataArr.reduce((maxItem, currentItem) => {
-        return currentItem.percentage > maxItem.percentage ? currentItem.percentage : maxItem;
+        return currentItem.percentage > maxItem ? currentItem.percentage : maxItem;
     }, dataArr[0].percentage)
     console.log(abvMax)
     // Create a copy of dataArr with modifications
     const updatedData = dataArr.map(item => {
-      const abvCost = (item.cost * abvMax) / item.percentage;
+      const abvCost = item.cost * (abvMax / item.percentage);
       return {
         ...item,
         abvCost: abvCost,
@@ -134,6 +139,7 @@ const processData = () => {
         setDrink={setBestAbvObj}
         setDataArr={setDataArr}/> :
     <div className="form-container">
+          <h1 className="title">Smartahol</h1>
         <h2 className="form-title">{title}</h2>
         <div className="Form">
             <form action="">
@@ -142,8 +148,12 @@ const processData = () => {
                     <input type="text" id="name" className="form-input" name='name' value={formData.name} onChange={handleChange}/>
                 </div>
                 <div className="form-input-container">
-                    <label htmlFor="amount" className="form-label">What's the amount?</label>
-                    <input type="text" id="amount" className="form-input" name='amount' value={formData.amount} onChange={handleChange} />
+                    <label htmlFor="amount" className="form-label">How many?</label>
+                    <input type="number" id="amount" className="form-input" name='amount' value={formData.amount} onChange={handleChange}/>
+                </div>
+                <div className="form-input-container">
+                    <label htmlFor="volume" className="form-label">What's the amount?</label>
+                    <input type="text" id="volume" className="form-input" name='volume' value={formData.volume} onChange={handleChange} />
                 <select id="unit" name="unit" value={formData.unit} onChange={handleChange}>
                     <option value="ml">ml</option>
                     <option value="cl">cl</option>

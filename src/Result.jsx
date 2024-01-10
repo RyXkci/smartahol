@@ -23,7 +23,7 @@ export default function Result({ drink, setDrink, dataArr, setDataArr}) {
                 iure reiciendis non, sequi recusandae quisquam autem eaque id consectetur,
                 tenetur libero! Cumque consectetur culpa sed.</p>
         </div>
-        <button onClick={reset}>Reset</button>
+        <button className="result-button" onClick={reset}>Reset</button>
 
     </>
     )

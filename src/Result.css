@@ -10,3 +10,13 @@
     color: #2F4858;
 
 }
+
+.result-button {
+    margin-top: .5em;
+    margin-right: .5em;
+    border-radius: 10px;
+    padding: .5em;
+    flex-grow: 1;
+    background-color: #E8AE30;
+  }
+  
