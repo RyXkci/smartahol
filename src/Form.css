@@ -4,6 +4,12 @@ input {
   border-radius: 5px;
 }
 
+.form-error{
+  color: #4f0113;
+  font-size: .9rem;
+  margin-bottom: 5px;
+}
+
 .form-title {
     color: #2F4858;
     font-size: 1.2rem;
