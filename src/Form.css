@@ -14,6 +14,17 @@ input {
     color: #2F4858;
     font-size: 1.2rem;
   }
+
+
+.title::after {
+  content: "";
+  position: absolute;
+  width: 175%;
+  height: 1px;
+  border: 1px solid #E8AE30;
+  bottom: 0;
+  left: -37.5%;
+}
   
   .form-label {
     color: #2F4858;
@@ -30,13 +41,44 @@ input {
   
   
   .form-container {
+    width:100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    /* padding: 2em 1em; */
     background-color: #E5F0FF;
+    border-radius: 10px;
+    box-shadow: 3px 3px 0 rgba(48, 57, 69, .1);
   }
+
+  .form-before {
+    height: 50px;
+    width: 100%;
+    background-color: #E8AE30;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.5em;
+    position: relative;
+  }
+  /* .form::before {
+    content: "";
+    position: absolute;
+    width: 141.421%;
+    height: 5px;
+    left:-1px;
+    top: 0px;
+    transform: rotate(45deg);
+    transform-origin: 1px 1px;
+
+    background: #E8AE30;
+  } */
   
   .box-container {
     display: flex;
@@ -46,4 +88,23 @@ input {
 .form-input-container {
     display: flex;
     flex-direction: column;
+}
+
+@media screen and (min-width: 768px) {
+  .form-container {
+    flex-direction: row;
+  }
+
+  .form-before {
+    height: 100%;
+    flex: 1 2 30%;
+    background-image: url(assets/images/bg-1.jpg);
+    background-size: cover;
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-blend-mode: overlay;
+  }
+  .form {
+    flex: 2 1 70%;
+  }
 }

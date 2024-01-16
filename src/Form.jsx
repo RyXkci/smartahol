@@ -132,10 +132,10 @@ const processData = () => {
         setDrink={setBestAbvObj}
         setDataArr={setDataArr}/> :
     <div className="form-container">
-          <h1 className="title">Smartahol</h1>
+      <div className="form-before"></div>
+        <div className="form">
+        <h1 className="title">Smartahol</h1>
         <h2 className="form-title">{title}</h2>
-
-        <div className="Form">
 <form onSubmit={handleSubmit(onSubmit)}>
     <div className="form-input-container">
         <label htmlFor="name" className="form-label">The boozes name?</label>
