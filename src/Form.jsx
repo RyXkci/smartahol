@@ -5,6 +5,10 @@ import Result from './Result';
 
 import { useFormContext } from './hooks/useFormContext';
 
+// UTILS
+import { parseVolume, calculateCost, maxAbvReduce, minAbvReduce } from './utils/utils';
+
+
 export default function Form({ title, renderForm }) {
 
 const {isSubmitted, changeSubmitted} = useFormContext()
@@ -12,6 +16,7 @@ const {isSubmitted, changeSubmitted} = useFormContext()
 const [dataArr, setDataArr] = useState([]);  // array to compare the drink objects when "go" button is clicked
 const [bestAbvObj, setBestAbvObj] = useState(null); // react state in which to save drink with best abv
 
+// react hook form options
 const { register, handleSubmit, reset, watch, formState: { errors } } = useForm({
     defaultValues: {
         name: "",
@@ -44,16 +49,6 @@ const registerOptions = {
 };
 
 
-// const [formData, setFormData] = useState({
-//     name: "",
-//     amount: 1,
-//     volume: "",
-//     unit:"ml",
-//     cost: "",
-//     percentage: "",
-
-// })
-
 const [triggerProcess, setTriggerProcess] = useState(false);
 
 // Boolean to trigger the processData button when "go" button is clicked. 
@@ -66,74 +61,28 @@ useEffect(() => {
   }, [dataArr, triggerProcess]);
 
 
-const handleChange = (evt) => {
-    const changedField = evt.target.name;
-    const changedValue = evt.target.value;
-    setFormData((currData) => {
-        currData[changedField] = changedValue;
-        return {...currData}
-    })
-}
-
-const onSubmit =(e) => {
-    // e.preventDefault()
-    // console.log(formData)
-
-    const drinkName = e.name;
+const onSubmit =(data) => {
+ 
+    const drinkName = data.name;
  
     //   multiply the amount by the number before converting.
-    let totalVolume = parseInt(e.volume) * e.amount;
-    let parsedVolume;
-       //   TURNING EVERYTHING IN TO ML
-    if (e.unit === "cl") {
-        parsedVolume = totalVolume * 10
-    } else if (e.unit === "l") {
-        parsedVolume = totalVolume * 1000
-    } else{parsedVolume = totalVolume}
-    console.log(parsedVolume)
+    let totalVolume = parseInt(data.volume) * data.amount;
 
+    // pass data to function to parse the volume in to ml
+    let unit = data.unit;
+    const parsedVolume = parseVolume(totalVolume, unit)
+   
     //    SAVING THE COST
-    let drinkCost = parseInt(e.cost);
-    let costML = drinkCost/parsedVolume;
+    let drinkCost = parseInt(data.cost);
+    let costML = calculateCost(drinkCost, parsedVolume)
     console.log(drinkCost, costML)
 
     //    SAVING THE PERCENTAGE
-    let drinkPercentage = parseInt(e.percentage);
-    console.log(drinkPercentage);
+    let drinkPercentage = parseInt(data.percentage);
 
 
     makeDataObj(drinkName, parsedVolume, costML, drinkPercentage);
-// const onSubmit =(e) => {
-//     // e.preventDefault()
-//     console.log(formData)
-
-//     const drinkName = formData.name;
- 
-//     //   multiply the amount by the number before converting.
-//     let totalVolume = parseInt(formData.volume) * formData.amount;
-//     let parsedVolume;
-//        //   TURNING EVERYTHING IN TO ML
-//     if (formData.unit === "cl") {
-//         parsedVolume = totalVolume * 10
-//     } else if (formData.unit === "l") {
-//         parsedVolume = totalVolume * 1000
-//     } else{parsedVolume = totalVolume}
-//     console.log(parsedVolume)
-
-//     //    SAVING THE COST
-//     let drinkCost = parseInt(formData.cost);
-//     let costML = drinkCost/parsedVolume;
-//     console.log(drinkCost, costML)
-
-//     //    SAVING THE PERCENTAGE
-//     let drinkPercentage = parseInt(formData.percentage);
-//     console.log(drinkPercentage);
-
-
-//     makeDataObj(drinkName, parsedVolume, costML, drinkPercentage);
-    
-//    renderForm(e);
-changeSubmitted(true)
+    changeSubmitted(true)
 }
 
 const makeDataObj =(drinkName, parsedVolume, costML, drinkPercentage) => {
@@ -143,19 +92,8 @@ const makeDataObj =(drinkName, parsedVolume, costML, drinkPercentage) => {
         cost: costML,
         percentage: drinkPercentage
     }
-    console.log(dataOBJ)
    setDataArr((oldDataArr) => [...oldDataArr, dataOBJ]);
    reset();
-//    setFormData({
-//     name: "",
-//     amount: 1,
-//     volume: "",
-//     unit:"ml",
-//     cost: "",
-//     percentage: "",
-
-// })
-   console.log(dataArr)
 }
 
 const runCalculate = (e) => {
@@ -165,11 +103,9 @@ const runCalculate = (e) => {
 }
 
 const processData = () => {
-    // const abvMax = Math.max(...abvArr);
-    const abvMax = dataArr.reduce((maxItem, currentItem) => {
-        return currentItem.percentage > maxItem ? currentItem.percentage : maxItem;
-    }, dataArr[0].percentage)
-    console.log(abvMax)
+     // Passing through function to calculate highest percentage
+    const abvMax = maxAbvReduce(dataArr)
+
     // Create a copy of dataArr with modifications
     const updatedData = dataArr.map(item => {
       const abvCost = item.cost * (abvMax / item.percentage);
@@ -180,17 +116,12 @@ const processData = () => {
     });
   
     // Update state using a callback function
-    // setDataArr(prevDataArr => [...updatedData]);
     setDataArr(updatedData);
     findBestAbv(updatedData)
-    
-
-  };
+    };
 
   const findBestAbv = (updatedData) => {
-    const minAbvCostObj = updatedData.reduce((minObj, currentObj) => {
-        return currentObj.abvCost < minObj.abvCost ? currentObj : minObj;
-      }); // Reduce, starts as first abvCost of object, checks if second is smaller. If it is it returns it, othherwise it returns the current.Used to find the smallest abv.
+    const minAbvCostObj = minAbvReduce(updatedData)
     setBestAbvObj(minAbvCostObj);
   }
   
